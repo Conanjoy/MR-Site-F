@@ -12,3 +12,4 @@ notifiers
 pyvirtualdisplay
 flask
 webdriver-manager
+gunicorn
