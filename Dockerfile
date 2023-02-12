@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 # Set default environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ="America/New_York"
+ENV TZ="Asia/Singapore"
 
 # Create working directory and relevant dirs
 WORKDIR /app
