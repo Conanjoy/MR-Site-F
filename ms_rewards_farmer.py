@@ -56,7 +56,7 @@ BASE_URL = "https://rewards.bing.com"
 def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     # Create Chrome browser
 	options = Options()
-    if ARGS.session or ARGS.account_browser:
+	if ARGS.session or ARGS.account_browser:
         if not isMobile:
             options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/PC')
         else:
