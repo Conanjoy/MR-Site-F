@@ -31,7 +31,7 @@ from selenium.common.exceptions import (ElementNotInteractableException,
                                         ElementNotVisibleException)
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.edge.service import Service as eservice
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
@@ -55,12 +55,7 @@ BASE_URL = "https://rewards.bing.com"
 # Define browser setup function
 def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     # Create Chrome browser
-    from selenium.webdriver.chrome.options import Options as ChromeOptions
-    from selenium.webdriver.edge.options import Options as EdgeOptions
-    if ARGS.edge:
-        options = EdgeOptions()
-    else:
-        options = ChromeOptions()
+	options = Options()
     if ARGS.session or ARGS.account_browser:
         if not isMobile:
             options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/PC')
@@ -87,11 +82,13 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     if platform.system() == 'Linux':
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-    if ARGS.edge:
-        browser = webdriver.Edge(service=eservice(EdgeChromiumDriverManager().install()), options=options)
-    else:
-        browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    return browser
+    chrome_browser_obj = None
+    try:
+        chrome_browser_obj = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    except Exception:
+        chrome_browser_obj = webdriver.Chrome(options=options)
+    finally:
+        return chrome_browser_obj
 
 # Define login function
 def login(browser: WebDriver, email: str, pwd: str, isMobile: bool = False):
