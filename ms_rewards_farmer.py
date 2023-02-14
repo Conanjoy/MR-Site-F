@@ -57,38 +57,38 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     # Create Chrome browser
 	options = Options()
 	if ARGS.session or ARGS.account_browser:
-        if not isMobile:
-            options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/PC')
-        else:
-            options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/Mobile')
-    options.add_argument("user-agent=" + user_agent)
-    options.add_argument('lang=' + LANG.split("-")[0])
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    prefs = {"profile.default_content_setting_values.geolocation": 2,
-            "credentials_enable_service": False,
-            "profile.password_manager_enabled": False,
-            "webrtc.ip_handling_policy": "disable_non_proxied_udp",
-            "webrtc.multiple_routes_enabled": False,
-            "webrtc.nonproxied_udp_enabled" : False}
-    if ARGS.account_browser:
-        prefs["detach"] = True
+	  if not isMobile:
+	    options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/PC')
+	    else:
+	      options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/Mobile')
+  options.add_argument("user-agent=" + user_agent)
+  options.add_argument('lang=' + LANG.split("-")[0])
+  options.add_argument('--disable-blink-features=AutomationControlled')
+  prefs = {"profile.default_content_setting_values.geolocation": 2,
+  "credentials_enable_service": False,
+  "profile.password_manager_enabled": False,
+  "webrtc.ip_handling_policy": "disable_non_proxied_udp",
+  "webrtc.multiple_routes_enabled": False,
+  "webrtc.nonproxied_udp_enabled" : False}
+  if ARGS.account_browser:
+    prefs["detach"] = True
     options.add_experimental_option("prefs", prefs)
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    if ARGS.headless and ARGS.account_browser is None:
-        options.add_argument("--headless")
+  if ARGS.headless and ARGS.account_browser is None:
+    options.add_argument("--headless")
     options.add_argument('log-level=3')
     options.add_argument("--start-maximized")
-    if platform.system() == 'Linux':
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-    chrome_browser_obj = None
-    try:
-        chrome_browser_obj = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    except Exception:
-        chrome_browser_obj = webdriver.Chrome(options=options)
-    finally:
-        return chrome_browser_obj
+  if platform.system() == 'Linux':
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+  chrome_browser_obj = None
+  try:
+    chrome_browser_obj = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+  except Exception:
+    chrome_browser_obj = webdriver.Chrome(options=options)
+  finally:
+    return chrome_browser_obj
 
 # Define login function
 def login(browser: WebDriver, email: str, pwd: str, isMobile: bool = False):
