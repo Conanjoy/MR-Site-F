@@ -59,8 +59,8 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
 	if ARGS.session or ARGS.account_browser:
 	  if not isMobile:
 	    options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/PC')
-	    else:
-	      options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/Mobile')
+	  else:
+	    options.add_argument(f'--user-data-dir={Path(__file__).parent}/Profiles/{CURRENT_ACCOUNT}/Mobile')
   options.add_argument("user-agent=" + user_agent)
   options.add_argument('lang=' + LANG.split("-")[0])
   options.add_argument('--disable-blink-features=AutomationControlled')
