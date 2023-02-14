@@ -9,8 +9,8 @@ import urllib.parse
 from pathlib import Path
 from argparse import ArgumentParser
 from datetime import date, datetime, timedelta
-from notifiers import get_notifier
 from typing import Union, List
+from notifiers import get_notifier
 import copy
 
 import ipapi
@@ -1553,7 +1553,8 @@ def farmer():
 def main():
     global LANG, GEO, TZ, ARGS
     # show colors in terminal
-    os.system('color')
+    if os.name == 'nt':
+        os.system('color')
     ARGS = argumentParser()
     LANG, GEO, TZ = getCCodeLangAndOffset()
     if platform.system() == "Linux":
