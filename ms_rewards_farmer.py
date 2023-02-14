@@ -30,7 +30,7 @@ from selenium.common.exceptions import (ElementNotInteractableException,
                                         JavascriptException,
                                         ElementNotVisibleException)
 from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.chrome.service import Service as cservice
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.edge.service import Service as eservice
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
@@ -90,7 +90,7 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     if ARGS.edge:
         browser = webdriver.Edge(service=eservice(EdgeChromiumDriverManager().install()), options=options)
     else:
-        browser = webdriver.Chrome(service=cservice(ChromeDriverManager().install()), options=options)
+        browser = webdrive.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return browser
 
 # Define login function
