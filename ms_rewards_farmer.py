@@ -90,7 +90,7 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     if ARGS.edge:
         browser = webdriver.Edge(service=eservice(EdgeChromiumDriverManager().install()), options=options)
     else:
-        browser = webdrive.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return browser
 
 # Define login function
