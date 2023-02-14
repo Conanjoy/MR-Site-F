@@ -7,7 +7,7 @@ certifi
 chardet
 idna
 requests
-selenium==4.4.3
+selenium==4.8.0
 urllib3
 ipapi
 func_timeout
