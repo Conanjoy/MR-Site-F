@@ -9,8 +9,8 @@ import urllib.parse
 from pathlib import Path
 from argparse import ArgumentParser
 from datetime import date, datetime, timedelta
-from notifiers import get_notifier
 from typing import Union, List
+from notifiers import get_notifier
 import copy
 
 import ipapi
@@ -81,7 +81,7 @@ def browserSetup(isMobile: bool, user_agent: str = PC_USER_AGENT) -> WebDriver:
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     if ARGS.headless and ARGS.account_browser is None:
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
     options.add_argument('log-level=3')
     options.add_argument("--start-maximized")
     if platform.system() == 'Linux':
@@ -1553,11 +1553,12 @@ def farmer():
 def main():
     global LANG, GEO, TZ, ARGS
     # show colors in terminal
-    os.system('color')
+    if os.name == 'nt':
+        os.system('color')
     ARGS = argumentParser()
     LANG, GEO, TZ = getCCodeLangAndOffset()
     if platform.system() == "Linux":
-        display = Display(visible=0, size=(1280, 1024), color_depth=16)
+        display = Display(visible=0, size=(900, 800))
         display.start()
     if ARGS.account_browser:
         prBlue(f"\n[INFO] Opening session for {ARGS.account_browser[0]}")

@@ -11,7 +11,7 @@ RUN chmod 777 /app
 # Install deps from APT
 RUN apt-get update && apt-get install -y \
   procps \
-  iputils-ping \
+  inetutils-ping \
   gunicorn \
   cron \
   vim \
@@ -57,8 +57,6 @@ RUN chmod +x entrypoint.sh
 
 # Set the entrypoint to our entrypoint.sh
 
-#ENTRYPOINT ./app/entrypoint.sh
+CMD ["bash", "/app/entrypoint.sh"]
 
-CMD ["bash", "entrypoint.sh"]
-
-#CMD ["cron","-f", "-L", "2"]
+#END
