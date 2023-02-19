@@ -2,7 +2,7 @@ FROM python:3.9-alpine3.16
 
 # Set default environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ="Asia/Singapore"
+ENV TZ="Europe/Berlin"
 
 # Create working directory and relevant dirs
 WORKDIR /app
