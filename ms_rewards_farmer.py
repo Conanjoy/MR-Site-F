@@ -38,8 +38,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from pyvirtualdisplay import Display
 
 # Define user-agents
-PC_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61'
-MOBILE_USER_AGENT = 'Mozilla/5.0 (Linux; Android 12; SM-N9750) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Mobile Safari/537.36 EdgA/109.0.1518.53'
+PC_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.46'
+MOBILE_USER_AGENT = 'Mozilla/5.0 (Linux; Android 12; SM-N9750) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36 EdgA/110.0.1587.41'
 
 POINTS_COUNTER = 0
 
@@ -117,6 +117,15 @@ def login(browser: WebDriver, email: str, pwd: str, isMobile: bool = False):
             time.sleep(2)
             browser.find_element(By.ID, 'iNext').click()
             time.sleep(5)
+        if browser.title == 'Is your security info still accurate?' or isElementExists(browser, By.ID, 'iLooksGood'):
+            time.sleep(2)
+            browser.find_element(By.ID, 'iLooksGood').click()
+            time.sleep(5)
+        # Click No thanks on break free from password question
+        if isElementExists(browser, By.ID, "setupAppDesc"):
+            time.sleep(2)
+            browser.find_element(By.ID, "iCancel").click()
+            time.sleep(5)
         if browser.title == 'Microsoft account | Home' or isElementExists(browser, By.ID, 'navs_container'):
             prGreen('[LOGIN] Account already logged in !')
             RewardsLogin(browser)
@@ -164,6 +173,15 @@ def login(browser: WebDriver, email: str, pwd: str, isMobile: bool = False):
             time.sleep(2)
             browser.find_element(By.ID, 'iNext').click()
             time.sleep(5)
+        if browser.title == 'Is your security info still accurate?' or isElementExists(browser, By.ID, 'iLooksGood'):
+            time.sleep(2)
+            browser.find_element(By.ID, 'iLooksGood').click()
+            time.sleep(5)
+        # Click No thanks on break free from password question
+        if isElementExists(browser, By.ID, "setupAppDesc"):
+            time.sleep(2)
+            browser.find_element(By.ID, "iCancel").click()
+            time.sleep(5)
         if ARGS.session:
             # Click Yes to stay signed in.
             browser.find_element(By.ID, 'idSIButton9').click()
@@ -187,7 +205,6 @@ def login(browser: WebDriver, email: str, pwd: str, isMobile: bool = False):
             if ARGS.telegram or ARGS.discord:
                 message = createMessage()
                 sendReportToMessenger(message)
-            input('Press any key to close...')
             os._exit(0)
         else:
             LOGS[CURRENT_ACCOUNT]['Last check'] = 'Unknown error !'
@@ -228,7 +245,12 @@ def RewardsLogin(browser: WebDriver):
     browser.get(BASE_URL)
     try:
         time.sleep(10 if not FAST else 5)
-        browser.find_element(By.ID, 'raf-signin-link-id').click()
+        # click on sign up button if needed
+        if isElementExists(browser, By.ID, "start-earning-rewards-link"):
+            browser.find_element(By.ID, "start-earning-rewards-link").click()
+            time.sleep(5)
+            browser.refresh()
+            time.sleep(5)
     except:
         pass
     time.sleep(10 if not FAST else 5)
@@ -247,8 +269,7 @@ def RewardsLogin(browser: WebDriver):
         # Check whether Rewards is available in your region or not
         elif browser.find_element(By.XPATH, '//*[@id="error"]/h1').get_attribute('innerHTML') == 'Microsoft Rewards is not available in this country or region.':
             prRed('[ERROR] Microsoft Rewards is not available in this country or region !')
-            input('[ERROR] Press any key to close...')
-            os._exit()
+            os._exit(0)
     except NoSuchElementException:
         pass
 
@@ -462,8 +483,10 @@ def resetTabs(browser: WebDriver):
         browser.switch_to.window(curr)
         time.sleep(0.5)
         browser.get(BASE_URL)
+        waitUntilVisible(browser, By.ID, 'app-host', 30)
     except:
         browser.get(BASE_URL)
+        waitUntilVisible(browser, By.ID, 'app-host', 30)
 
 def getAnswerCode(key: str, string: str) -> str:
 	t = 0
@@ -1255,6 +1278,11 @@ def argumentParser():
                         nargs=1,
                         type=isValidTime,
                         )
+    parser.add_argument('--autoexit',
+                        help='[Optional] Automatically exit the script once it has completed.',
+                        action='store_true',
+                        required=False)
+
     args = parser.parse_args()
     if args.fast:
         global FAST
@@ -1306,7 +1334,9 @@ def logs():
                 LOGS[account]['Punch cards'] = False
                 LOGS[account]['More promotions'] = False
                 LOGS[account]['MSN shopping game'] = False
-                LOGS[account]['PC searches'] = False 
+                LOGS[account]['PC searches'] = False
+            if not isinstance(LOGS[account]["Points"], int):
+                LOGS[account]["Points"] = 0
         updateLogs()               
         prGreen('\n[LOGS] Logs loaded successfully.\n')
     except FileNotFoundError:
@@ -1475,6 +1505,7 @@ def farmer():
                 startingPoints = POINTS_COUNTER
                 prGreen('[POINTS] You have ' + str(POINTS_COUNTER) + ' points on your account !')
                 browser.get(BASE_URL)
+                waitUntilVisible(browser, By.ID, 'app-host', 30)
                 redeem_goal_title, redeem_goal_price = getRedeemGoal(browser)
                 if not LOGS[CURRENT_ACCOUNT]['Daily']:
                     completeDailySet(browser)
@@ -1503,6 +1534,7 @@ def farmer():
                 if LOGS[account['username']]['PC searches'] and ERROR:
                     startingPoints = POINTS_COUNTER
                     browser.get(BASE_URL)
+                    waitUntilVisible(browser, By.ID, 'app-host', 30)
                     redeem_goal_title, redeem_goal_price = getRedeemGoal(browser)
                     remainingSearches, remainingSearchesM = getRemainingSearches(browser)
                 if remainingSearchesM != 0:
@@ -1516,7 +1548,10 @@ def farmer():
             prGreen('[POINTS] You are now at ' + str(POINTS_COUNTER) + ' points !\n')
             
             FINISHED_ACCOUNTS.append(CURRENT_ACCOUNT)
-            LOGS[CURRENT_ACCOUNT]["Today's points"] = New_points
+            if LOGS[CURRENT_ACCOUNT]["Points"] > 0 and POINTS_COUNTER >= LOGS[CURRENT_ACCOUNT]["Points"] :
+                LOGS[CURRENT_ACCOUNT]["Today's points"] = POINTS_COUNTER - LOGS[CURRENT_ACCOUNT]["Points"]
+            else:
+                LOGS[CURRENT_ACCOUNT]["Today's points"] = New_points
             LOGS[CURRENT_ACCOUNT]["Points"] = POINTS_COUNTER
             if redeem_goal_title != "" and redeem_goal_price <= POINTS_COUNTER:
                 prGreen(f"[POINTS] Account ready to redeem {redeem_goal_title} for {redeem_goal_price} points.")
@@ -1600,7 +1635,9 @@ def main():
     updateLogs()
     if ARGS.shutdown:
         os.system(f'shutdown /s /t {ARGS.shutdown}')
-
+    if ARGS.autoexit:
+        os._exit(0)
+    input('Press any key to close the program...')
           
 if __name__ == '__main__':
     main()
